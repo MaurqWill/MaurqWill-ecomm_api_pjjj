@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_cors import CORS
+# from flask_cors import CORS
 from database import db
 from models.schemas import ma
 # from limiter import limiter
@@ -29,7 +29,7 @@ def create_app(config_name):
     ma.init_app(app)
     # limiter.init_app(app)
     cache.init_app(app)
-    CORS(app)
+    # CORS(app)
 
     print('Running')
     blueprint_config(app)

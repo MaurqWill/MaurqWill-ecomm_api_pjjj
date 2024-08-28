@@ -1,43 +1,97 @@
 from flask import request, jsonify
 from models.schemas.customerSchema import customer_schema, customers_schema
-from services import customerService #dont import the individual function, import the module as a whole
+from services import customerService  # Import the service module
 from marshmallow import ValidationError
 from caching import cache
-from utils.util import token_required, admin_required
+from utils.util import token_required, admin_required  # Import role-based access decorators
 
 def login():
+    """
+    Handles customer login by generating a JWT token.
+    """
     try:
         credentials = request.json
         token = customerService.login(credentials['username'], credentials['password'])
     except KeyError:
-        return jsonify({'messages':'Invalid payload, expecting username and password'}), 401
-    
+        return jsonify({'message': 'Invalid payload, expecting username and password'}), 401
+
     if token:
         return jsonify(token), 200
     else:
-        return jsonify({'messages':'Invalid username or password'}), 401
+        return jsonify({'message': 'Invalid username or password'}), 401
 
-def save(): #name the controller will always be the same as the service function
-
+def save():
+    """
+    Creates a new customer.
+    """
     try:
-        #try to validate the incoming data, and deserialize
+        # Validate and deserialize the incoming data
         customer_data = customer_schema.load(request.json)
-
     except ValidationError as e:
         return jsonify(e.messages), 400
-    
-    customer_saved = customerService.save(customer_data)
-    return customer_schema.jsonify(customer_data), 201
 
-# @token_required
+    customer_saved = customerService.save(customer_data)
+    return customer_schema.jsonify(customer_saved), 201
+
 @cache.cached(timeout=60)
 @admin_required
 def find_all():
+    """
+    Retrieves all customers.
+    Only accessible by admin users. Results are cached.
+    """
     all_customers = customerService.find_all()
-    return customers_schema.jsonify(all_customers),200
+    return customers_schema.jsonify(all_customers), 200
 
+@admin_required
 def find_all_paginate():
-    page = int(request.args.get('page'))
-    per_page = int(request.args.get('per_page'))
+    """
+    Retrieves customers with pagination.
+    Only accessible by admin users.
+    """
+    try:
+        page = int(request.args.get('page', 1))  # Default to page 1 if not provided
+        per_page = int(request.args.get('per_page', 10))  # Default to 10 per page if not provided
+    except ValueError:
+        return jsonify({'message': 'Page and per_page must be integers'}), 400
+
     customers = customerService.find_all_paginate(page, per_page)
-    return customers_schema.jsonify(customers), 200
+    return customers_schema.jsonify(customers.items), 200
+
+@token_required
+def get_customer(customer_id):
+    """
+    Retrieves a customer by ID.
+    Accessible by authenticated users.
+    """
+    customer = customerService.get_customer(customer_id)
+    if customer:
+        return customer_schema.jsonify(customer), 200
+    else:
+        return jsonify({'message': 'Customer not found'}), 404
+
+@admin_required
+def update(customer_id):
+    """
+    Updates a customer by ID.
+    Only accessible by admin users.
+    """
+    try:
+        customer_data = customer_schema.load(request.json)
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+
+    updated_customer = customerService.update(customer_id, customer_data)
+    if updated_customer:
+        return customer_schema.jsonify(updated_customer), 200
+    else:
+        return jsonify({'message': 'Customer not found'}), 404
+
+@admin_required
+def delete(customer_id):
+    """
+    Deletes a customer by ID.
+    Only accessible by admin users.
+    """
+    customerService.delete(customer_id)
+    return jsonify({'message': 'Customer deleted successfully'}), 204

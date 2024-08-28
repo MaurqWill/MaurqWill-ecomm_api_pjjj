@@ -34,6 +34,44 @@ def save(customer_data):
     db.session.refresh(new_customer)
     return new_customer
 
+def get_customer(customer_id):
+    """
+    Retrieve a customer by ID.
+    """
+    query = select(Customer).where(Customer.id == customer_id)
+    customer = db.session.execute(query).scalar_one_or_none()
+    return customer
+
+def update_customer(customer_id, customer_data):
+    """
+    Update customer details based on their ID.
+    """
+    query = (
+        update_customer(Customer)
+        .where(Customer.id == customer_id)
+        .values(
+            name=customer_data.get('name'),
+            email=customer_data.get('email'),
+            password=customer_data.get('password'),
+            phone=customer_data.get('phone'),
+            username=customer_data.get('username'),
+            role_id=customer_data.get('role_id')  # Optional, if you have role_id in your data
+        )
+    )
+    db.session.execute(query)
+    db.session.commit()
+    return get_customer(customer_id)
+
+def delete_customer(customer_id):
+    """
+    Delete a customer from the database based on their ID.
+    """
+    query = delete_customer(Customer).where(Customer.id == customer_id)
+    db.session.execute(query)
+    db.session.commit()
+
+
+
 def find_all():
     query = select(Customer)
     all_customers = db.session.execute(query).scalars().all()

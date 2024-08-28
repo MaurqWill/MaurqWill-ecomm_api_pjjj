@@ -40,3 +40,24 @@ def find_by_customer_email(email):
     query = select(Order).join(Customer).where(Customer.id == Order.customer_id).filter(Customer.email == email)
     orders = db.session.execute(query).scalars().all()
     return orders
+
+def update_order(order_id, data):
+    """
+    Update order details based on their ID.
+    """
+    query = (
+        update_order(Order)
+        .where(Order.id == order_id)
+        .values(**data)
+    )
+    db.session.execute(query)
+    db.session.commit()
+    return find_by_id(order_id)
+
+def delete_order(order_id):
+    """
+    Delete an order from the database based on their ID.
+    """
+    query = delete_order(Order).where(Order.id == order_id)
+    db.session.execute(query)
+    db.session.commit()

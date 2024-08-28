@@ -34,7 +34,6 @@ jobs:
           echo "Contents of site-packages: $(ls -l venv/lib/python*/site-packages)"
 
   test:
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -59,7 +58,6 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_*.py'
 
   deploy:
-    needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:

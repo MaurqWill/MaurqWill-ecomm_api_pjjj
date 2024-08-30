@@ -1,7 +1,12 @@
+import sys
+import os
 import unittest
 from unittest.mock import MagicMock, patch
 from faker import Faker
 from werkzeug.security import generate_password_hash
+
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from services import customerService
 
 class TestLoginCustomer(unittest.TestCase):

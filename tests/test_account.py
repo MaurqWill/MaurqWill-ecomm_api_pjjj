@@ -71,7 +71,7 @@ from models.customer import Customer
 class AccountTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = create_app('TestingConfig')
+        cls.app = create_app('ProductionConfig')
         cls.client = cls.app.test_client()
         with cls.app.app_context():
             db.create_all()

@@ -1,9 +1,9 @@
 from flask import request, jsonify
 from models.schemas.customerSchema import customer_schema, customers_schema
-from services import customerService  # Import the service module
+from services import customerService  
 from marshmallow import ValidationError
 from caching import cache
-from utils.util import token_required, admin_required  # Import role-based access decorators
+from utils.util import token_required, admin_required 
 
 def login():
     """
@@ -21,9 +21,7 @@ def login():
         return jsonify({'message': 'Invalid username or password'}), 401
 
 def save():
-    """
-    Creates a new customer.
-    """
+
     try:
         # Validate and deserialize the incoming data
         customer_data = customer_schema.load(request.json)
@@ -36,19 +34,13 @@ def save():
 @cache.cached(timeout=60)
 @admin_required
 def find_all():
-    """
-    Retrieves all customers.
-    Only accessible by admin users. Results are cached.
-    """
+
     all_customers = customerService.find_all()
     return customers_schema.jsonify(all_customers), 200
 
 @admin_required
 def find_all_paginate():
-    """
-    Retrieves customers with pagination.
-    Only accessible by admin users.
-    """
+
     try:
         page = int(request.args.get('page', 1))  # Default to page 1 if not provided
         per_page = int(request.args.get('per_page', 10))  # Default to 10 per page if not provided
@@ -60,10 +52,7 @@ def find_all_paginate():
 
 @token_required
 def get_customer(customer_id):
-    """
-    Retrieves a customer by ID.
-    Accessible by authenticated users.
-    """
+
     customer = customerService.get_customer(customer_id)
     if customer:
         return customer_schema.jsonify(customer), 200
@@ -72,10 +61,7 @@ def get_customer(customer_id):
 
 @admin_required
 def update(customer_id):
-    """
-    Updates a customer by ID.
-    Only accessible by admin users.
-    """
+
     try:
         customer_data = customer_schema.load(request.json)
     except ValidationError as e:
@@ -89,9 +75,6 @@ def update(customer_id):
 
 @admin_required
 def delete(customer_id):
-    """
-    Deletes a customer by ID.
-    Only accessible by admin users.
-    """
+
     customerService.delete(customer_id)
     return jsonify({'message': 'Customer deleted successfully'}), 204

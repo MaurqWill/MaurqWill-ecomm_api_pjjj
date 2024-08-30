@@ -11,4 +11,4 @@ class CustomerAccountSchema(Schema):
 
 
 customer_account_schema = CustomerAccountSchema()
-customers_account_schema = CustomerAccountSchema(many=True, exclude=["password"])
+customer_accounts_schema = CustomerAccountSchema(many=True, exclude=["password"])

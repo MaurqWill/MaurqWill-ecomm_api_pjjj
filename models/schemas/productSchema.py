@@ -1,13 +1,9 @@
-from marshmallow import fields, validate
-from . import ma
+from marshmallow import fields, Schema
 
-class ProductSchema(ma.Schema):
-    id = fields.Integer(required=False)
-    name = fields.String(required=False)
-    price = fields.Integer(required=True)
-
-    class Meta:
-        fields = ("id", 'name', 'price')
+class ProductSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str(required=True)
+    price = fields.Float(required=True)
 
 product_schema = ProductSchema()
 products_schema = ProductSchema(many=True)

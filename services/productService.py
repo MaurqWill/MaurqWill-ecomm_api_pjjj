@@ -1,25 +1,20 @@
-from models.product import Product
 from database import db
-from sqlalchemy import select
+from models.product import Product
+from sqlalchemy import select, update, delete
 
-def save(product_data):
+def save_product(product_data):
     new_product = Product(name=product_data['name'], price=product_data['price'])
     db.session.add(new_product)
     db.session.commit()
     db.session.refresh(new_product)
-
     return new_product
 
-
 def get_product(product_id):
-    """
-    Retrieve a product by ID.
-    """
     query = select(Product).where(Product.id == product_id)
     product = db.session.execute(query).scalar_one_or_none()
     return product
 
-def find_all():
+def find_all_products():
     query = select(Product)
     all_products = db.session.execute(query).scalars().all()
     return all_products
@@ -30,11 +25,8 @@ def search_product(search_term):
     return search_products
 
 def update_product(product_id, data):
-    """
-    Update product details based on their ID.
-    """
     query = (
-        update_product(Product)
+        update(Product)
         .where(Product.id == product_id)
         .values(**data)
     )
@@ -43,9 +35,6 @@ def update_product(product_id, data):
     return get_product(product_id)
 
 def delete_product(product_id):
-    """
-    Delete a product from the database based on their ID.
-    """
-    query = delete_product(Product).where(Product.id == product_id)
+    query = delete(Product).where(Product.id == product_id)
     db.session.execute(query)
     db.session.commit()

@@ -1,5 +1,5 @@
 from flask import Blueprint
-from services.customerAccountService import create_account, get_account, update_account, delete_account, find_all_accounts, find_all_accounts_paginate
+from controllers.customerAccountController import create_account, get_account, update_account, delete_account, find_all_accounts, find_all_accounts_paginate
 
 customer_account_blueprint = Blueprint('customer_account_bp', __name__)
 

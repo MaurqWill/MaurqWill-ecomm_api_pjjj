@@ -41,7 +41,7 @@ def blueprint_config(app):
     app.register_blueprint(customer_blueprint, url_prefix='/customers')
     app.register_blueprint(product_blueprint, url_prefix='/products')
     app.register_blueprint(order_blueprint, url_prefix='/orders')
-    app.register_blueprint(customer_account_blueprint, url_prefix='/customer-accounts')  # Register customer account blueprint
+    app.register_blueprint(customer_account_blueprint, url_prefix='/accounts')  # Register customer account blueprint
     app.register_blueprint(swagger_blueprint, url_prefix=SWAGGER_URL)
 
 # def rate_limit_config():

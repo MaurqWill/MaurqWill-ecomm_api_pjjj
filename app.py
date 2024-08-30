@@ -32,7 +32,7 @@ def create_app(config_name):
     # CORS(app)
 
     print('Running')
-    # blueprint_config(app)
+    blueprint_config(app)
     # rate_limit_config()
 
     return app
@@ -47,16 +47,16 @@ def blueprint_config(app):
 # def rate_limit_config():
 #     limiter.limit("200 per day")
 
-if __name__ == '__main__':
-    # app = create_app('ProductionConfig')
-    app = create_app('DevelopmentConfig')
+# if __name__ == '__main__':
+app = create_app('ProductionConfig')
+    # app = create_app('DevelopmentConfig')
 
-    blueprint_config(app)
+    # blueprint_config(app)
 
     # # rate_limit_config()
 
-    with app.app_context():
-        # db.drop_all()
+with app.app_context():
+        db.drop_all()
         db.create_all()
 
-    app.run(debug=True, port=8080)
+    # app.run(debug=True, port=8080)

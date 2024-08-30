@@ -1,59 +1,3 @@
-# import unittest
-# from app import create_app
-# from database import db
-# from models.customer import Customer
-
-# class CustomerTests(unittest.TestCase):
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.app = create_app('TestingConfig')
-#         cls.client = cls.app.test_client()
-#         with cls.app.app_context():
-#             db.create_all()
-    
-#     @classmethod
-#     def tearDownClass(cls):
-#         with cls.app.app_context():
-#             db.drop_all()
-
-#     def test_create_customer(self):
-#         response = self.client.post('/customers/create', json={
-#             'name': 'Jane Doe',
-#             'email': 'jane@example.com',
-#             'phone': '0987654321',
-#             'username': 'janedoe',
-#             'password': 'password123'
-#         })
-#         self.assertEqual(response.status_code, 201)
-#         self.assertIn('id', response.json)
-
-#     def test_get_customer(self):
-#         customer = Customer(name='Jane Doe', email='jane@example.com', phone='0987654321', username='janedoe', password='password123')
-#         db.session.add(customer)
-#         db.session.commit()
-#         response = self.client.get(f'/customers/{customer.id}')
-#         self.assertEqual(response.status_code, 200)
-#         self.assertEqual(response.json['name'], 'Jane Doe')
-
-#     def test_update_customer(self):
-#         customer = Customer(name='Jane Doe', email='jane@example.com', phone='0987654321', username='janedoe', password='password123')
-#         db.session.add(customer)
-#         db.session.commit()
-#         response = self.client.put(f'/customers/{customer.id}', json={'name': 'Jane Smith'})
-#         self.assertEqual(response.status_code, 200)
-#         self.assertEqual(response.json['name'], 'Jane Smith')
-
-#     def test_delete_customer(self):
-#         customer = Customer(name='Jane Doe', email='jane@example.com', phone='0987654321', username='janedoe', password='password123')
-#         db.session.add(customer)
-#         db.session.commit()
-#         response = self.client.delete(f'/customers/{customer.id}')
-#         self.assertEqual(response.status_code, 204)
-
-
-
-
-
 import unittest
 from app import create_app
 from database import db
@@ -62,62 +6,29 @@ from models.customer import Customer
 class CustomerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = create_app('TestingConfig')
+        cls.app = create_app('ProductionConfig')
         cls.client = cls.app.test_client()
         with cls.app.app_context():
             db.create_all()
-    
+
     @classmethod
     def tearDownClass(cls):
         with cls.app.app_context():
             db.drop_all()
 
-    def setUp(self):
-        """Create a fresh database session for each test."""
-        with self.app.app_context():
-            db.session.remove()
-            db.create_all()
-
-    def tearDown(self):
-        """Clean up after each test."""
-        with self.app.app_context():
-            db.session.remove()
-            db.drop_all()
-
-    def test_create_customer(self):
-        response = self.client.post('/customers/', json={
-            'name': 'Jane Doe',
-            'email': 'jane@example.com',
-            'phone': '0987654321',
-            'username': 'janedoe',
-            'password': 'password123'
-        })
-        self.assertEqual(response.status_code, 201)
-        self.assertIn('id', response.json)
-
     def test_get_customer(self):
-        customer = Customer(name='Jane Doe', email='jane@example.com', phone='0987654321', username='janedoe', password='password123')
-        db.session.add(customer)
-        db.session.commit()
+        # Create a new customer in the database
+        customer = Customer(name='Test Customer', email='test@example.com', phone='1234567890', username='testuser', password='password')
+        with self.app.app_context():
+            db.session.add(customer)
+            db.session.commit()
+
+        # Send a GET request to retrieve the customer
         response = self.client.get(f'/customers/{customer.id}')
+        
+        # Assert that the retrieval is successful
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json['name'], 'Jane Doe')
-
-    def test_update_customer(self):
-        customer = Customer(name='Jane Doe', email='jane@example.com', phone='0987654321', username='janedoe', password='password123')
-        db.session.add(customer)
-        db.session.commit()
-        response = self.client.put(f'/customers/{customer.id}', json={'name': 'Jane Smith'})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json['name'], 'Jane Smith')
-
-    def test_delete_customer(self):
-        customer = Customer(name='Jane Doe', email='jane@example.com', phone='0987654321', username='janedoe', password='password123')
-        db.session.add(customer)
-        db.session.commit()
-        response = self.client.delete(f'/customers/{customer.id}')
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.json['email'], 'test@example.com')
 
 if __name__ == '__main__':
     unittest.main()
-

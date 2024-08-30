@@ -4,9 +4,10 @@ import unittest
 from unittest.mock import MagicMock, patch
 from faker import Faker
 from werkzeug.security import generate_password_hash
+from app import app
 
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from services import customerService
 
 class TestLoginCustomer(unittest.TestCase):
@@ -22,10 +23,13 @@ class TestLoginCustomer(unittest.TestCase):
         mock_user.username = faker.user_name()
         mock_user.password = generate_password_hash(password)
         mock_customer.return_value.scalar_one_or_none.return_value = mock_user
+        
+        with app.app_context():
+            
+            response = customerService.login(mock_user.username, password)
+            response_data = response.get_json()
 
-        response = customerService.login(mock_user.username, password)
-
-        self.assertEqual(response['status'], 'fail')
+        self.assertEqual(response_data['status'], 'fail')
 
 if __name__ == '__main__':
     unittest.main()  

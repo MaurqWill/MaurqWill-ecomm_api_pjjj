@@ -1,14 +1,9 @@
 from flask import jsonify, request
 from marshmallow import ValidationError
 from models.schemas.productSchema import product_schema, products_schema
-from services.productService import (
-    save_product,
-    get_product,
-    find_all_products,
-    search_product,
-    update_product,
-    delete_product
-)
+from services import productService
+
+
 from utils.util import token_required, admin_required
 
 @admin_required
@@ -20,7 +15,7 @@ def create_product():
         return jsonify(err.messages), 400
 
     try:
-        product = save_product(product_data)
+        product = productService.save_product(product_data)
         return product_schema.jsonify(product), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -28,7 +23,7 @@ def create_product():
 @token_required
 def get_products():
 
-    products = find_all_products()
+    products = productService.find_all_products()
     return products_schema.jsonify(products), 200
 
 @token_required
@@ -38,13 +33,13 @@ def search_products():
     if not search_term:
         return jsonify({"message": "Search term is required"}), 400
 
-    products = search_product(search_term)
+    products = productService.search_product(search_term)
     return products_schema.jsonify(products), 200
 
 @token_required
 def get_product_by_id(product_id):
 
-    product = get_product(product_id)
+    product = productService.get_product(product_id)
     if product:
         return product_schema.jsonify(product), 200
     else:
@@ -59,7 +54,7 @@ def update_product_by_id(product_id):
         return jsonify(e.messages), 400
 
     try:
-        updated_product = update_product(product_id, product_data)
+        updated_product = productService.update_product(product_id, product_data)
         return product_schema.jsonify(updated_product), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -68,7 +63,7 @@ def update_product_by_id(product_id):
 def delete_product_by_id(product_id):
 
     try:
-        delete_product(product_id)
+        productService.delete_product(product_id)
         return jsonify({'message': 'Product deleted successfully'}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400

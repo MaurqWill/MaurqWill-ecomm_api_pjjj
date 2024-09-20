@@ -1,7 +1,8 @@
 from marshmallow import Schema, fields
+from . import ma
 
-class CustomerAccountSchema(Schema):
-    id = fields.Int(dump_only=True)
+class CustomerAccountSchema(ma.Schema):
+    id = fields.Int(required=True)
     username = fields.Str(required=True)
     password = fields.Str(required=True)
     customer_id = fields.Int(required=True)

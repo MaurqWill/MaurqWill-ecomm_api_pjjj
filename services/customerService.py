@@ -14,13 +14,13 @@ def login(username, password):
 
         if customer and customer.password == password:
             auth_token = encode_token(customer.id, customer.role.role_name)
-            customer_data = customer.to_dict()  # Convert to dictionary
+            # customer_data = customer.to_dict()  # Convert to dictionary
 
             response = {
                 "status": "success",
                 "message": "Successfully Logged In",
                 "auth_token": auth_token,
-                "customer": customer_data  # Include customer data in the response
+                # "customer": customer_data  # Include customer data in the response
             }
         else:
             response = {
@@ -28,7 +28,7 @@ def login(username, password):
                 "message": "Invalid username or password"
             }
 
-        return jsonify(response)
+        return response
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 

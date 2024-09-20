@@ -9,9 +9,9 @@ class TestCustomerService(unittest.TestCase):
 
     @patch('services.customerService.db.session.execute')
     def test_login_customer(self, mock_customer):
-        # Set up the return value for our mock object
+        
         faker = Faker()
-        mock_user = MagicMock()  # Simulate a user retrieved from the database
+        mock_user = MagicMock()  
         mock_user.id = 1
         mock_user.roles = [MagicMock(role_name='admin'), MagicMock(role_name='user')]
         password = faker.password()
@@ -51,7 +51,7 @@ class TestCustomerService(unittest.TestCase):
 
         with app.app_context():
             response = customerService.get_customer(1)
-            # Since the function can return a dictionary with customer data or None, handle both cases
+
             if response:
                 self.assertEqual(response['id'], mock_customer.id)
                 self.assertEqual(response['username'], mock_customer.username)

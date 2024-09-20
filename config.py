@@ -1,55 +1,41 @@
 import os
 
-class DevelopmentConfig:
+# class Config:
+#     SQLALCHEMY_TRACK_MODIFICATIONS = False
+#     CACHE_TYPE = 'redis'
+#     CACHE_REDIS_URL = os.environ.get('CACHE_REDIS_URL', 'redis://localhost:6379/1')
+#     RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL', 'redis://localhost:6379/0')
+#     RATELIMIT_DEFAULT = "3 per day"  # Set default rate limit
+
+class Config:
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    CACHE_TYPE = 'simple'  # Use simple cache for development
+    RATELIMIT_DEFAULT = "100 per day"  # Set default rate limit
+
+
+class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:C0dingTemp012!@localhost/bes_ecomm'
-    CACHE_TYPE = 'SimpleCache'
     DEBUG = True
+    TESTING = False
 
-class ProductionConfig:
+class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'sqlite:///app.db'
-    CACHE_TYPE = 'SimpleCache'
     DEBUG = False
+    TESTING = False
 
-# class TestingConfig(Config):
-#     """Testing configuration."""
-#     TESTING = True
-#     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # Use in-memory database for tests
-#     DEBUG = True
-#     # WTF_CSRF_ENABLED = False  # Disable CSRF for testing
+class TestingConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # Use an in-memory SQLite database for testing
+    DEBUG = True
+    TESTING = True
+    WTF_CSRF_ENABLED = False  # Disable CSRF for testing purposes if using forms
+
+# A dictionary to help in accessing configurations easily
+config_by_name = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'testing': TestingConfig
+}
 
 
 
 
-
-
-
-# import os
-
-# class DevelopmentConfig:
-#     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:C0dingTemp012!@localhost/bes_ecomm'
-#     CACHE_TYPE = 'SimpleCache'
-#     DEBUG = True
-#     TESTING = False
-#     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-# class ProductionConfig:
-#     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'sqlite:///app.db'
-#     CACHE_TYPE = 'SimpleCache'
-#     DEBUG = False
-#     TESTING = False
-#     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-# class TestingConfig:
-#     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # Use an in-memory SQLite database for testing
-#     CACHE_TYPE = 'SimpleCache'
-#     DEBUG = True
-#     TESTING = True
-#     SQLALCHEMY_TRACK_MODIFICATIONS = False
-#     WTF_CSRF_ENABLED = False  # Disable CSRF for testing purposes if using forms
-
-# # A dictionary to help in accessing configurations easily
-# config_by_name = {
-#     'development': DevelopmentConfig,
-#     'production': ProductionConfig,
-#     'testing': TestingConfig
-# }

@@ -60,7 +60,7 @@ def get_customer(customer_id):
         return jsonify({'message': 'Customer not found'}), 404
 
 @admin_required
-def update(customer_id):
+def update_customer(customer_id):
 
     try:
         customer_data = customer_schema.load(request.json)
@@ -74,7 +74,7 @@ def update(customer_id):
         return jsonify({'message': 'Customer not found'}), 404
 
 @admin_required
-def delete(customer_id):
+def delete_customer(customer_id):
 
     customerService.delete(customer_id)
     return jsonify({'message': 'Customer deleted successfully'}), 204

@@ -1,5 +1,5 @@
 from flask import Blueprint
-from services.customerService import save, find_all, find_all_paginate, login, get_customer, update_customer, delete_customer
+from controllers.customerController import save, find_all, find_all_paginate, login, get_customer, update_customer, delete_customer
 
 customer_blueprint = Blueprint('customer_bp', __name__)
 

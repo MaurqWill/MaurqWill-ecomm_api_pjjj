@@ -6,6 +6,8 @@ from limiter import Limiter
 from caching import cache
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_limiter.util import get_remote_address
+import os
+from config import config_by_name
 
 from models.customer import Customer
 from models.product import Product
@@ -31,7 +33,7 @@ limiter = Limiter(
 def create_app(config_name):
     app = Flask(__name__)
 
-    app.config.from_object(f'config.{config_name}')
+    app.config.from_object(config_by_name[config_name])
     db.init_app(app)
     ma.init_app(app)
     limiter.init_app(app)
@@ -56,7 +58,8 @@ def blueprint_config(app):
 
 
 if __name__ == '__main__':
-    app = create_app('DevelopmentConfig')
+    config_name = os.getenv('FLASK_ENV', 'development')
+    app = create_app(config_name)
   # app = create_app('ProductionConfig')
 
     blueprint_config(app)

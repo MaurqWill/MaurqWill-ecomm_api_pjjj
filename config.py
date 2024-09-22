@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 
 # class Config:
 #     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -9,17 +10,17 @@ import os
 
 class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CACHE_TYPE = 'simple'  # Use simple cache for development
-    RATELIMIT_DEFAULT = "100 per day"  # Set default rate limit
+    CACHE_TYPE = os.getenv('CACHE_TYPE', 'simple')  # Use simple cache for development
+    RATELIMIT_DEFAULT = os.getenv('RATELIMIT_DEFAULT', "100 per day")  # Set default rate limit
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:C0dingTemp012!@localhost/bes_ecomm'
+    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI', 'mysql+mysqlconnector://root:C0dingTemp012!@localhost/bes_ecomm')
     DEBUG = True
     TESTING = False
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'sqlite:///app.db'
+    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///app.db')
     DEBUG = False
     TESTING = False
 
